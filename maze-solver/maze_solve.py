@@ -1,15 +1,18 @@
 from collections import deque
+from constants import *
 
 def solveMaze(maze, start, end):
     R = len(maze)
     C = len(maze[0])
 
-    # convert (x,y) → (row,col)
     start_r = start[1]
     start_c = start[0]
 
     queue = deque()
     queue.append((start_r, start_c, 0))
+
+    visited = [[False] * C for _ in range(R)]
+    parent = {}
 
     Directions = [
         (0, 1),
@@ -29,23 +32,35 @@ def solveMaze(maze, start, end):
 
         visited[r][c] = True
 
-        # reached end?
-        if (c, r) == end:
-            return dist
+        yield("visit", r, c)
+
+        if (r, c) == (end[1], end[0]):
+            break
 
         for dr, dc in Directions:
             nr = r + dr
             nc = c + dc
 
-            if nr < 0 or nr >= R or nc < 0 or nc >= C:
-                continue
-
-            if maze[nr][nc] == 0:
-                continue
-
-            if visited[nr][nc]:
-                continue
-
-            queue.append((nr, nc, dist + 1))
+            if 0 <= nr < R and 0 <= nc < C:
+                if not visited[nr][nc] and maze[nr][nc] != WALL:
+                    queue.append((nr, nc, dist + 1))
+                    parent[(nr, nc)] = (r, c)
+            
+    path = []
+    current = (end[1], end[0])
+    
+    while current in parent:
+        path.append(current)
+        current = parent[current]
+        
+    path.reverse()
+            
+    for cell in path:
+        yield("path", cell[0], cell[1])                        
+            
+        queue.append((nr, nc, dist + 1))
+            
+    for r, c in path:
+        yield("path", r, c)
 
     return None
