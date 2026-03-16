@@ -2,7 +2,7 @@ from constants import *
 import cv2
 import numpy as np
 
-def animate(maze, solver):
+def animate(maze, solver, end):
     
     display = maze.copy()
     scale = 30
@@ -15,7 +15,9 @@ def animate(maze, solver):
             
         elif action == "path":
             display[r][c] = PATH
-              
+            
+        display[end[1], end[0]] = END
+                  
         img = render(display)
         img = cv2.resize(
             img, 

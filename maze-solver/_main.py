@@ -18,4 +18,4 @@ print("Start:", start)
 print("End:", end)
 
 solver = solveMaze(maze, start, end)
-animate(maze, solver)
+animate(maze, solver, end)
