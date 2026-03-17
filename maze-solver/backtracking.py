@@ -3,6 +3,7 @@ from constants import *
 from enum import Enum
 import numpy as np
 import cv2
+import math
 
 class Directions(Enum):
 	UP = 1
@@ -74,7 +75,7 @@ class Backtracking:
 		random.shuffle(directions)
 
 		# Recursively move
-		# middle cell is the wall supposed to be broken by the algorithm
+		# Middle cell - wall supposed to be broken by the algorithm
 		for dir in directions:
 			if dir == Directions.UP.value:
 				next_cell_x, next_cell_y = current_cell_x, current_cell_y-2
@@ -93,8 +94,6 @@ class Backtracking:
 				grid[middle_cell_y, middle_cell_x] = 0.5
 				self.generator(next_cell_x, next_cell_y, grid)
 
-	# Pick random start and end
-	@staticmethod
 	def find_start_end(maze):
 		free_cells = [(x, y) for y in range(1, len(maze))
 							  for x in range(1, len(maze[0]))
@@ -102,13 +101,39 @@ class Backtracking:
 
 		if not free_cells:
 			return None, None, maze
-
-		start = random.choice(free_cells)
-		end = random.choice(free_cells)
-		while end == start:
-			end = random.choice(free_cells)
+		
+		
 
 		maze[start[1]][start[0]] = START
 		maze[end[1]][end[0]] = END
 
 		return start, end, maze
+
+	def find_start_end(maze, limit_id):
+     
+		if limit_id != 1 and limit_id != 0:
+			print("Invalid limit_id value, chose 0 or 1")
+		
+		else:
+			free_cells = [(x, y) for y in range(0, len(maze))
+									for x in range(0, len(maze[0]))
+									if maze[y][x] == 1]
+
+			if not free_cells:
+				return None, None, maze
+		
+			if limit_id == 0:
+				start = random.choice(free_cells)
+				end = random.choice(free_cells)
+  
+				while end == start:
+					end = random.choice(free_cells)
+			
+			elif limit_id == 1:
+				start = free_cells[0]
+				end = free_cells[len(free_cells) - 1]
+
+			maze[start[1]][start[0]] = START
+			maze[end[1]][end[0]] = END
+
+			return start, end, maze
