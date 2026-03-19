@@ -5,10 +5,10 @@ from class_maze import Maze
 from renderer import animate
 import numpy as np
 
-maze = generate_maze("backtracking", 25, 25, "maze_image.png", True)
+maze = generate_maze("backtracking", 20, 20, "maze_image.png", True)
 print("Maze values:", np.unique(maze))
 
-start, end, maze = Backtracking.find_start_end(maze, 1)
+start, end, maze = Backtracking.find_start_end(maze, 0)
 
 maze_obj = Maze(maze, start, end)
 maze_obj.print_ascii(start, end)
@@ -16,5 +16,5 @@ maze_obj.print_ascii(start, end)
 print("Start:", start)
 print("End:", end)
 
-solver = solveMaze(maze, start, end)
+solver = solveMaze(maze, start, end, algorithm="wall_follower") # algorithm = bfs / wall_follower
 animate(maze, solver, end)

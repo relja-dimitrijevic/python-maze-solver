@@ -94,21 +94,6 @@ class Backtracking:
 				grid[middle_cell_y, middle_cell_x] = 0.5
 				self.generator(next_cell_x, next_cell_y, grid)
 
-	def find_start_end(maze):
-		free_cells = [(x, y) for y in range(1, len(maze))
-							  for x in range(1, len(maze[0]))
-							  if maze[y][x] == 1]
-
-		if not free_cells:
-			return None, None, maze
-		
-		
-
-		maze[start[1]][start[0]] = START
-		maze[end[1]][end[0]] = END
-
-		return start, end, maze
-
 	def find_start_end(maze, limit_id):
      
 		if limit_id != 1 and limit_id != 0:

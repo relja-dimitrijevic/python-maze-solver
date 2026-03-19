@@ -5,7 +5,7 @@ import numpy as np
 def animate(maze, solver, end):
     
     display = maze.copy()
-    scale = 30
+    scale = 15
     
     for action, r, c in solver:
         
