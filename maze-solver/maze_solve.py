@@ -1,6 +1,7 @@
 from collections import deque
 from constants import *
 
+
 def solveMaze(maze, start, end, algorithm):
     if algorithm == "bfs":
         return solve_bfs(maze, start, end)
@@ -8,127 +9,156 @@ def solveMaze(maze, start, end, algorithm):
         return solve_wall_follower(maze, start, end)
     else:
         raise ValueError("Unknown algorithm!")
-    
+
+
 def solve_bfs(maze, start, end):
     R = len(maze)
     C = len(maze[0])
 
-    start_r = start[1]
-    start_c = start[0]
+    start_row = start[1]
+    start_col = start[0]
 
     queue = deque()
-    queue.append((start_r, start_c, 0))
+    queue.append((start_row, start_col, 0))
 
     visited = [[False] * C for _ in range(R)]
     parent = {}
 
-    Directions = [
-        (0, 1),
-        (0, -1),
-        (1, 0),
-        (-1, 0)
-    ]
+    directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
-    while len(queue) != 0:
-        coord = queue.popleft()
-        r, c, dist = coord
+    while queue:
+        row, col, dist = queue.popleft()
 
-        if visited[r][c]:
+        if visited[row][col]:
             continue
 
-        visited[r][c] = True
+        visited[row][col] = True
+        yield ("visit", row, col)
 
-        yield("visit", r, c)
-
-        if (r, c) == (end[1], end[0]):
+        if (row, col) == (end[1], end[0]):
             break
 
-        for dr, dc in Directions:
-            nr = r + dr
-            nc = c + dc
+        for dr, dc in directions:
+            next_row = row + dr
+            next_col = col + dc
 
-            if 0 <= nr < R and 0 <= nc < C:
-                if not visited[nr][nc] and maze[nr][nc] != WALL:
-                    queue.append((nr, nc, dist + 1))
-                    parent[(nr, nc)] = (r, c)
-            
+            if 0 <= next_row < R and 0 <= next_col < C:
+                if not visited[next_row][next_col] and maze[next_row][next_col] != WALL:
+                    queue.append((next_row, next_col, dist + 1))
+                    parent[(next_row, next_col)] = (row, col)
+
+    # reconstruct path
     path = []
     current = (end[1], end[0])
-    
+
     while current in parent:
         path.append(current)
         current = parent[current]
-        
+
+    path.append((start[1], start[0]))
     path.reverse()
-            
-    for cell in path:
-        yield("path", cell[0], cell[1])                        
-            
-    return None
+
+    for row, col in path:
+        yield ("path", row, col)
+
 
 def solve_wall_follower(maze, start, end):
     R, C = maze.shape
 
-    # Directions: Right, Down, Left, Up (clockwise)
-    directions = [
-        (0, 1),   # right
-        (1, 0),   # down
-        (0, -1),  # left
-        (-1, 0)   # up
-    ]
+    parent = {}
+    visited_states = set()
 
-    # Start position
-    r, c = start[1], start[0]
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # right  # down  # left  # up
 
-    # Start facing right (you can change this)
-    dir_idx = 0
+    row, col = start[1], start[0]
+    direction_index = 0
 
-    # Keep track of visited to avoid infinite loops
-    visited = set()
+    while (row, col) != (end[1], end[0]):
 
-    while (r, c) != (end[1], end[0]):
+        # 🔴 loop detection
+        state = (row, col, direction_index)
+        if state in visited_states:
+            print("Loop detected — wall follower stuck")
+            return None
+        visited_states.add(state)
 
-        visited.add((r, c))
-        yield ("visit", r, c)
+        yield ("visit", row, col)
 
-        # Try to turn LEFT first (left-hand rule)
-        left_dir = (dir_idx - 1) % 4
-        dr, dc = directions[left_dir]
-        nr, nc = r + dr, c + dc
+        # --- LEFT ---
+        left_index = (direction_index - 1) % 4
+        dr, dc = directions[left_index]
+        next_row = row + dr
+        next_col = col + dc
 
-        if 0 <= nr < R and 0 <= nc < C and maze[nr][nc] != WALL:
-            dir_idx = left_dir
-            r, c = nr, nc
+        if 0 <= next_row < R and 0 <= next_col < C and maze[next_row][next_col] != WALL:
+            prev = (row, col)
+            row, col = next_row, next_col
+            if (row, col) not in parent:
+                parent[(row, col)] = prev
+            direction_index = left_index
             continue
 
-        # Otherwise try forward
-        dr, dc = directions[dir_idx]
-        nr, nc = r + dr, c + dc
+        # --- FORWARD ---
+        dr, dc = directions[direction_index]
+        next_row = row + dr
+        next_col = col + dc
 
-        if 0 <= nr < R and 0 <= nc < C and maze[nr][nc] != WALL:
-            r, c = nr, nc
+        if 0 <= next_row < R and 0 <= next_col < C and maze[next_row][next_col] != WALL:
+            prev = (row, col)
+            row, col = next_row, next_col
+            if (row, col) not in parent:
+                parent[(row, col)] = prev
             continue
 
-        # Otherwise try right
-        right_dir = (dir_idx + 1) % 4
-        dr, dc = directions[right_dir]
-        nr, nc = r + dr, c + dc
+        # --- RIGHT ---
+        right_index = (direction_index + 1) % 4
+        dr, dc = directions[right_index]
+        next_row = row + dr
+        next_col = col + dc
 
-        if 0 <= nr < R and 0 <= nc < C and maze[nr][nc] != WALL:
-            dir_idx = right_dir
-            r, c = nr, nc
+        if 0 <= next_row < R and 0 <= next_col < C and maze[next_row][next_col] != WALL:
+            prev = (row, col)
+            row, col = next_row, next_col
+            if (row, col) not in parent:
+                parent[(row, col)] = prev
+            direction_index = right_index
             continue
 
-        # Otherwise turn back (dead end)
-        back_dir = (dir_idx + 2) % 4
-        dr, dc = directions[back_dir]
-        nr, nc = r + dr, c + dc
+        # --- BACK (SAFE) ---
+        back_index = (direction_index + 2) % 4
+        dr, dc = directions[back_index]
+        next_row = row + dr
+        next_col = col + dc
 
-        dir_idx = back_dir
-        r, c = nr, nc
+        if 0 <= next_row < R and 0 <= next_col < C:
+            prev = (row, col)
+            row, col = next_row, next_col
+            if (row, col) not in parent:
+                parent[(row, col)] = prev
+            direction_index = back_index
+        else:
+            return None
 
-    # Mark final position
-    yield ("visit", r, c)
+    yield ("visit", row, col)
 
-    # No shortest path reconstruction — just show path taken
-    return None
+    # reconstruct path
+    path = []
+    current = (row, col)
+
+    visited_path = set()
+
+    while current in parent:
+        if current in visited_path:
+            break
+        visited_path.add(current)
+    
+        path.append(current)
+        current = parent[current]
+
+    path.append((start[1], start[0]))
+    path.reverse()
+
+    for row, col in path:
+        yield ("path", row, col)
+        
+    
