@@ -40,7 +40,7 @@ class Backtracking:
 		# Pick random starting point (even indices inside the maze)
 		sx = random.choice(range(2, self.width - 2, 2))
 		sy = random.choice(range(2, self.height - 2, 2))
-		self.generator(sx, sy, maze)
+		self.Generator(sx, sy, maze)
 
 		maze[maze == 0.5] = 1
 
@@ -58,7 +58,7 @@ class Backtracking:
 		return maze
 
 	# Recursive generator with boundary check
-	def generator(self, current_cell_x, current_cell_y, grid):
+	def Generator(self, current_cell_x, current_cell_y, grid):
 		grid[current_cell_y, current_cell_x] = 0.5  # mark current as visited
 
 		# Build list of valid directions dynamically
@@ -92,9 +92,9 @@ class Backtracking:
 
 			if grid[next_cell_y, next_cell_x] == 1:
 				grid[middle_cell_y, middle_cell_x] = 0.5
-				self.generator(next_cell_x, next_cell_y, grid)
+				self.Generator(next_cell_x, next_cell_y, grid)
 
-	def find_start_end(maze, limit_id):
+	def findStartEnd(maze, limit_id):
      
 		if limit_id != 1 and limit_id != 0:
 			print("Invalid limit_id value, chose 0 or 1")

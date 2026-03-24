@@ -2,7 +2,7 @@ from constants import *
 import cv2
 import numpy as np
 
-def animate(maze, solver, end):
+def Animate(maze, solver, end):
     
     display = maze.copy()
     scale = 15
@@ -18,7 +18,7 @@ def animate(maze, solver, end):
             
         display[end[1], end[0]] = END
                   
-        img = render(display)
+        img = Render(display)
         img = cv2.resize(
             img, 
             (img.shape[1] * scale, img.shape[0] * scale),
@@ -30,7 +30,7 @@ def animate(maze, solver, end):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
-def render(maze):
+def Render(maze):
     h, w = maze.shape
     img = np.zeros((h, w, 3), dtype = np.uint8)
     

@@ -7,16 +7,16 @@ class Maze:
         self.start = start
         self.end = end
 
-    def in_bounds(self, r, c):
+    def inBounds(self, r, c):
         return 0 <= r < self.rows and 0 <= c < self.cols
 
-    def is_wall(self, r, c):
+    def isWall(self, r, c):
         return self.grid[r][c] == 0
 
-    def is_free(self, r, c):
+    def isFree(self, r, c):
         return self.grid[r][c] != 0
 
-    def neighbors(self, r, c):
+    def Neighbors(self, r, c):
         dirs = [(0,1),(0,-1),(1,0),(-1,0)]
         result = []
 
@@ -29,7 +29,7 @@ class Maze:
 
         return result
 
-    def print_ascii(self, start, end):
+    def printASCII(self, start, end):
         for row in self.grid:
             line = ""
             for cell in row:

@@ -4,14 +4,14 @@ from constants import *
 
 def solveMaze(maze, start, end, algorithm):
     if algorithm == "bfs":
-        return solve_bfs(maze, start, end)
+        return solveBFS(maze, start, end)
     elif algorithm == "wall_follower":
-        return solve_wall_follower(maze, start, end)
+        return solveWallFollower(maze, start, end)
     else:
         raise ValueError("Unknown algorithm!")
 
 
-def solve_bfs(maze, start, end):
+def solveBFS(maze, start, end):
     R = len(maze)
     C = len(maze[0])
 
@@ -62,7 +62,7 @@ def solve_bfs(maze, start, end):
         yield ("path", row, col)
 
 
-def solve_wall_follower(maze, start, end):
+def solveWallFollower(maze, start, end):
     R, C = maze.shape
 
     parent = {}
@@ -75,7 +75,7 @@ def solve_wall_follower(maze, start, end):
 
     while (row, col) != (end[1], end[0]):
 
-        # 🔴 loop detection
+        # loop detection
         state = (row, col, direction_index)
         if state in visited_states:
             print("Loop detected — wall follower stuck")
