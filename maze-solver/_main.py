@@ -16,5 +16,5 @@ maze_obj.printASCII(start, end)
 print("Start:", start)
 print("End:", end)
 
-solver = solveMaze(maze, start, end, algorithm="bfs") # algorithm = bfs / wall_follower 
-Animate(maze, solver, end)
+solver = solveMaze(maze, start, end, algorithm="a*") # algorithm = bfs / wall_follower / a*
+Animate(maze, solver, end, start)

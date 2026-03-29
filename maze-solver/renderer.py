@@ -2,7 +2,7 @@ from constants import *
 import cv2
 import numpy as np
 
-def Animate(maze, solver, end):
+def Animate(maze, solver, end, start):
     
     display = maze.copy()
     scale = 15
@@ -17,6 +17,7 @@ def Animate(maze, solver, end):
             display[r][c] = PATH
             
         display[end[1], end[0]] = END
+        display[start[1], start[0]] = START
                   
         img = Render(display)
         img = cv2.resize(
