@@ -5,10 +5,10 @@ from class_maze import Maze
 from renderer import Animate
 import numpy as np
 
-maze = generateMaze("backtracking", 40, 40, "maze_image.png", True)
+maze = generateMaze("prims", 40, 40, "maze_image.png", False)
 print("Maze values:", np.unique(maze))
 
-start, end, maze = Backtracking.findStartEnd(maze, 0)
+start, end, maze = Backtracking.findStartEnd(maze, 1)
 
 maze_obj = Maze(maze, start, end)
 maze_obj.printASCII(start, end)
